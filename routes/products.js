@@ -1,20 +1,8 @@
 var express = require('express');
-const fs = require('fs');
 var router = express.Router();
 
 const data = require('../data/products.json');
-
-const writeFileSync = (path, data) => {
-  fs.writeFileSync(path, JSON.stringify(data), function (err) {
-    if (err) {
-      console.log('««««« err »»»»»', err);
-      throw err
-    };
-    console.log('Saved!');
-  });
-};
-
-const generationID = () => Math.floor(Date.now());
+const { writeFileSync, generationID } = require('../utils');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
