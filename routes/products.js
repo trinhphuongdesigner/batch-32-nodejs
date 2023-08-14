@@ -1,17 +1,40 @@
 var express = require('express');
+const fs = require('fs');
 var router = express.Router();
 
-let data = [
-  { id: 1, name: 'iPhone 14 Pro Max', price: 1500 },
-  { id: 2, name: 'iPhone 13 Pro Max', price: 1200 },
-  { id: 3, name: 'iPhone 12 Pro Max', price: 1000 },
-  { id: 4, name: 'iPhone 11 Pro Max', price: 800 },
-  { id: 9, name: 'iPhone X', price: 500 },
-];
+const data = require('../data/products.json');
+
+const writeFileSync = (path, data) => {
+  fs.writeFileSync(path, JSON.stringify(data), function (err) {
+    if (err) {
+      console.log('««««« err »»»»»', err);
+      throw err
+    };
+    console.log('Saved!');
+  });
+};
+
+const generationID = () => Math.floor(Date.now());
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.send(data);
+});
+
+router.post('/', async function(req, res, next) {
+  const { name, price } = req.body;
+
+  const newP = { name, price, id: generationID() };
+  if (data?.length > 0) {
+    await writeFileSync('data/products.json', [ ...data, newP]);
+  } else {
+    await writeFileSync('data/products.json', [newP]);
+  }
+
+  res.send(200, {
+    payload: newP,
+    message: "Tạo thành công"
+  });
 });
 
 router.get('/search', function(req, res, next) {
@@ -46,7 +69,6 @@ router.patch('/:id', function (req, res, next) {
     res.send({ ok: true, message: 'Updated' });
   }
   res.send({ ok: false, message: 'Updated fail' });
-
 });
 
 router.delete('/:id', function (req, res, next) {
