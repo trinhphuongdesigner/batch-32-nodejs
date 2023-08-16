@@ -2,7 +2,7 @@ const fs = require('fs');
 const yup = require('yup');
 
 let data = require('../../data/categories.json');
-const { writeFileSync, generationID } = require('../../utils');
+const { writeFileSync, generationID, fuzzySearch } = require('../../utils');
 
 function getAll(req, res, next) {
   res.send(data);
@@ -29,7 +29,8 @@ async function create(req, res, next) {
 
 function search(req, res, next) {
   const { name } = req.query;
-  const filter = data.filter((item) => item.name === name)
+
+  const filter = data.filter((item) => fuzzySearch(name).test(item.name))
   res.send(filter);
 };
 
