@@ -89,6 +89,4 @@ module.exports = {
   getDetail,
   update,
   deleteFunc,
-}
-
-
+};
