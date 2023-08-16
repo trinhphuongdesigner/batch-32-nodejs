@@ -1,15 +1,19 @@
 const yup = require('yup');
 
-const updateProductSchema = yup.object({
-  params: yup.object({
-    id: yup.number(),
-  }),
+const productSchema = yup.object({
   body: yup.object({
     price: yup.number(),
-    name: yup.string(),
+    name: yup.string().max(20),
+  }),
+});
+
+const checkIdSchema = yup.object({
+  params: yup.object({
+    id: yup.number(),
   }),
 });
 
 module.exports = {
-  updateProductSchema,
+  productSchema,
+  checkIdSchema,
 }
