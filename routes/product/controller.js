@@ -1,14 +1,14 @@
 const fs = require('fs');
 const yup = require('yup');
 
-const data = require('../../data/products.json');
+let data = require('../../data/products.json');
 const { writeFileSync, generationID } = require('../../utils');
 
 function getAll (req, res, next) {
   res.send(data);
 };
 
-async function create  (req, res, next) {
+async function create (req, res, next) {
   const { name, price } = req.body;
 
   const newP = { name, price, id: generationID() };
@@ -73,11 +73,11 @@ function update (req, res, next) {
   }
 };
 
-function deleteFunc (req, res, next) {
+async function deleteFunc (req, res, next) {
   const { id } = req.params;
   data = data.filter((x) => x.id.toString() !== id.toString());
 
-  console.log('««««« data »»»»»', data);
+  await writeFileSync('data/products.json', data);
 
   res.send({ ok: true, message: 'Deleted' });
 };

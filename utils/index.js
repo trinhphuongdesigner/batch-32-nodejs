@@ -1,4 +1,5 @@
 const fs = require('fs');
+const yup = require('yup');
 
 module.exports = {
   writeFileSync: (path, data) => {
@@ -31,4 +32,10 @@ module.exports = {
       return res.status(400).json({ type: err.name, errors: err.errors, provider: "YUP" });
     }
   },
+
+  checkIdSchema: yup.object({
+    params: yup.object({
+      id: yup.number(),
+    }),
+  }),
 }
