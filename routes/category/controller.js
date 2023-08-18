@@ -9,8 +9,22 @@ const Category = require('../../models/category');
 // mongoose.connect('mongodb://localhost:27017/node-32-database');
 mongoose.connect('mongodb://127.0.0.1:27017/node-32-database');
 
-function getAll(req, res, next) {
-  res.send(data);
+async function getAll(req, res, next) {
+  try {
+    const payload = await Category.find({
+      isDeleted: false,
+    });
+
+    res.send(200, {
+      payload,
+      message: "Lấy dánh sách thành công"
+    });
+  } catch (error) {
+    res.send(400, {
+      error,
+      message: "Lấy dánh sách không thành công"
+    });
+  }
 };
 
 async function create(req, res, next) {
@@ -46,17 +60,23 @@ function search(req, res, next) {
 };
 
 // Get one by id
-function getDetail(req, res, next) {
+async function getDetail(req, res, next) {
   try {
-    const { id } = req.params;
-    let result = data.find((x) => x.id == id);
+    const  { id } = req.params;
+    const payload = await Category.findOne({
+      _id: id,
+      isDeleted: false,
+    });
 
-    if (result) {
-      return res.send({ code: 200, payload: result });
-    }
-    return res.send(404, { message: "Not found" });
+    res.send(200, {
+      payload,
+      message: "Xem chi tiết thành công"
+    });
   } catch (error) {
-    res.send(400, { message: "Bad request" })
+    res.send(400, {
+      error,
+      message: "Xem chi tiết không thành công"
+    });
   }
 };
 
@@ -81,12 +101,40 @@ function update(req, res, next) {
 };
 
 async function deleteFunc(req, res, next) {
+  try {
   const { id } = req.params;
-  data = data.filter((x) => x.id.toString() !== id.toString());
+    // const payload = await Category.findByIdAndUpdate(
+    //   id,
+    //   // {$set:{isDeleted : true}},
+    //   { isDeleted : true },
+    //   { new: true },
+    // );
+    const payload = await Category.findOneAndUpdate(
+      { 
+        _id: id,
+        isDeleted: false,
+      },
+      // {$set:{isDeleted : true}},
+      { isDeleted : true },
+      { new: true },
+    );
 
-  await writeFileSync('data/categories.json', data);
+    if (payload) {
+      return res.send(200, {
+        payload,
+        message: "Xóa thành công"
+      });
+    }
 
-  res.send({ ok: true, message: 'Deleted' });
+    return res.send(200, {
+      message: "Không tìm thấy danh mục"
+    });
+  } catch (error) {
+    res.send(400, {
+      error,
+      message: "Xóa không thành công"
+    });
+  }
 };
 
 module.exports = {

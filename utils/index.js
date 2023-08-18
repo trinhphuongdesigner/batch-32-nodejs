@@ -1,5 +1,6 @@
 const fs = require('fs');
 const yup = require('yup');
+const ObjectId = require('mongodb').ObjectId;
 
 module.exports = {
   writeFileSync: (path, data) => {
@@ -35,7 +36,9 @@ module.exports = {
 
   checkIdSchema: yup.object({
     params: yup.object({
-      id: yup.number(),
+      id: yup.string().test('inValid', 'ID sai định dạng', (value) => {
+        return ObjectId.isValid(value);
+      }),
     }),
   }),
 
