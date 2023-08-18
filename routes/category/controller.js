@@ -1,30 +1,41 @@
 const fs = require('fs');
 const yup = require('yup');
+const { default: mongoose } = require('mongoose');
 
 let data = require('../../data/categories.json');
 const { writeFileSync, generationID, fuzzySearch } = require('../../utils');
+const Category = require('../../models/category');
+
+// mongoose.connect('mongodb://localhost:27017/node-32-database');
+mongoose.connect('mongodb://127.0.0.1:27017/node-32-database');
 
 function getAll(req, res, next) {
   res.send(data);
 };
 
 async function create(req, res, next) {
-  const { name, isDeleted, description } = req.body;
+  try {
+    const { name, description } = req.body;
 
-  const newP = { name, isDeleted, description, id: generationID() };
-  if (data?.length > 0) {
-    await writeFileSync('data/categories.json', [...data, newP]);
-  } else {
-    await writeFileSync('data/categories.json', [newP]);
-  }
+  const newCategory = new Category({
+    name,
+    description,
+  });
 
-  // const data2 = await fs.open('data/categories.json');
-  squadJSON = JSON.parse(fs.readFileSync('data/categories.json', 'utf8'));
+  const payload = await newCategory.save();
 
   res.send(200, {
-    payload: squadJSON,
+    payload,
     message: "Tạo thành công"
   });
+  } catch (error) {
+    console.log('««««« error »»»»»', error);
+
+    res.send(400, {
+      error,
+      message: "Tạo không thành công"
+    });
+  }
 };
 
 function search(req, res, next) {

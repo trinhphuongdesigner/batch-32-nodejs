@@ -2,8 +2,8 @@ const yup = require('yup');
 
 const productSchema = yup.object({
   body: yup.object({
-    name: yup.string().max(50).required(),
-    isDeleted: yup.bool().required(),
+    name: yup.string().max(500).required(),
+    isDeleted: yup.bool(),
     description: yup.string().max(500),
   }),
 });
