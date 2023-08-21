@@ -10,18 +10,18 @@ const {
   update,
   deleteFunc,
 } = require('./controller');
-const { productSchema, productPatchSchema } = require('./validation');
+const { supplierSchema, supplierPatchSchema } = require('./validation');
 
 router.route('/')
   .get(getAll)
-  .post(validateSchema(productSchema), create);
+  .post(validateSchema(supplierSchema), create);
 
 router.get('/search', search);
 
 router.route('/:id')
   .get(validateSchema(checkIdSchema), getDetail)
-  .put(validateSchema(checkIdSchema), validateSchema(productSchema), update)
-  .patch(validateSchema(checkIdSchema), validateSchema(productPatchSchema), update)
+  .put(validateSchema(checkIdSchema), validateSchema(supplierSchema), update)
+  .patch(validateSchema(checkIdSchema), validateSchema(supplierPatchSchema), update)
   .delete(validateSchema(checkIdSchema), deleteFunc);
 
 module.exports = router;

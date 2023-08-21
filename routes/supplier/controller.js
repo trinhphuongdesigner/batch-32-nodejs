@@ -1,9 +1,9 @@
 const { fuzzySearch } = require('../../utils');
-const { Category } = require('../../models');
+const { Supplier } = require('../../models');
 
 async function getAll(req, res, next) {
   try {
-    const payload = await Category.find({ isDeleted: false });
+    const payload = await Supplier.find({ isDeleted: false });
 
     res.send(200, {
       payload,
@@ -19,14 +19,13 @@ async function getAll(req, res, next) {
 
 async function create(req, res, next) {
   try {
-    const { name, description } = req.body;
+    const { name, email, phoneNumber, address } = req.body;
 
-    const newCategory = new Category({
-      name,
-      description,
+    const newSupplier = new Supplier({
+      name, email, phoneNumber, address
     });
 
-    const payload = await newCategory.save();
+    const payload = await newSupplier.save();
 
     res.send(200, {
       payload,
@@ -34,7 +33,6 @@ async function create(req, res, next) {
     });
   } catch (error) {
     console.log('««««« error »»»»»', error);
-
     res.send(400, {
       error,
       message: "Tạo không thành công"
@@ -44,14 +42,14 @@ async function create(req, res, next) {
 
 async function search(req, res, next) {
   try {
-    const { name } = req.query;
+    const { name, address, email } = req.query;
     const conditionFind = { isDeleted: false };
 
-    if (name) {
-      conditionFind.name = fuzzySearch(name);
-    }
+    if (name) conditionFind.name = fuzzySearch(name);
+    if (address) conditionFind.address = fuzzySearch(address);
+    if (email) conditionFind.email = fuzzySearch(email);
 
-    const payload = await Category.find(conditionFind);
+    const payload = await Supplier.find(conditionFind);
 
     res.send(200, {
       payload,
@@ -65,11 +63,10 @@ async function search(req, res, next) {
   }
 };
 
-// Get one by id
 async function getDetail(req, res, next) {
   try {
     const { id } = req.params;
-    const payload = await Category.findOne({
+    const payload = await Supplier.findOne({
       _id: id,
       isDeleted: false,
     });
@@ -90,7 +87,7 @@ async function update(req, res, next) {
   try {
     const { id } = req.params;
 
-    const payload = await Category.findOneAndUpdate(
+    const payload = await Supplier.findOneAndUpdate(
       { _id: id, isDeleted: false },
       { ...req.body },
       { new: true },
@@ -115,7 +112,7 @@ async function update(req, res, next) {
 async function deleteFunc(req, res, next) {
   try {
     const { id } = req.params;
-    const payload = await Category.findOneAndUpdate(
+    const payload = await Supplier.findOneAndUpdate(
       { _id: id, isDeleted: false },
       { isDeleted: true },
       { new: true },

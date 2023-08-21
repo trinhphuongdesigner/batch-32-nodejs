@@ -3,11 +3,13 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const { default: mongoose } = require('mongoose');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const productsRouter = require('./routes/product/router');
 const categoriesRouter = require('./routes/category/router');
+const suppliersRouter = require('./routes/supplier/router');
 
 const app = express();
 
@@ -21,10 +23,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+mongoose.connect('mongodb://127.0.0.1:27017/node-32-database');
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/products', productsRouter);
 app.use('/categories', categoriesRouter);
+app.use('/suppliers', suppliersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
