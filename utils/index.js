@@ -53,4 +53,6 @@ module.exports = {
   
     return new RegExp(regex, 'gi');
   },
+
+  toObjectId: (id = '') => ObjectId(id),
 }

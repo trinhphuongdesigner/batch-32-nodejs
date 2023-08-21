@@ -1,5 +1,5 @@
 const { Product, Category, Supplier } = require('../../models');
-const { fuzzySearch } = require('../../utils');
+const { fuzzySearch, toObjectId } = require('../../utils');
 
 module.exports = {
   getAll: async (req, res, next) => { // NOTE
@@ -188,30 +188,34 @@ module.exports = {
       const product = await Product.findOne({ _id: id, isDeleted: false });
 
       if (!product) {
-        return res.status(404).json({ message: "Product not found" });
+        return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
       }
+      const error = [];
 
       // Check if the supplier exists and is not deleted
-      if (product.supplierId !== supplierId) {
+      if (product.supplierId.toString() !== supplierId.toString()) {
         const supplier = await Supplier.findOne({ _id: supplierId, isDeleted: false });
 
-        if (!supplier) {
-          return res.status(400).json({ message: "Supplier not available" });
-        }
+        if (!supplier) error.push("Nhà cung cấp không khả dụng");
       }
 
       // Check if the category exists and is not deleted
-      if (product.categoryId !== categoryId) {
+      if (product.categoryId.toString() !== categoryId) {
         const category = await Category.findOne({ _id: categoryId, isDeleted: false });
 
-        if (!category) {
-          return res.status(400).json({ message: "Category not available" });
-        }
+      if (!category)  error.push("Danh mục không khả dụng");
+      };
+
+      if (error.length > 0 ) {
+        return res.send(400, {
+          error,
+          message: "Không khả dụng"
+        });
       }
 
       // Update the product
       const updatedProduct = await Product.findByIdAndUpdate(
-        { _id: id, isDeleted: false },
+        id,
         { name, price, discount, stock, description, supplierId, categoryId },
         { new: true }
       );
