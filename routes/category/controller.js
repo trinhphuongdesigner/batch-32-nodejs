@@ -74,7 +74,13 @@ async function getDetail(req, res, next) {
       isDeleted: false,
     });
 
-    res.send(200, {
+    if (!payload) {
+      return res.send(400, {
+        message: "Không tìm thấy"
+      });
+    }
+
+    return res.send(200, {
       payload,
       message: "Xem chi tiết thành công"
     });

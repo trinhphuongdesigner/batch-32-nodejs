@@ -4,9 +4,7 @@ const { Supplier } = require('../../models');
 
 async function getAll(req, res, next) {
   try {
-    console.log('««««« hello »»»»»');
     const payload = await Supplier.find({ isDeleted: false });
-    console.log('««««« payload »»»»»', payload);
 
     res.send(200, {
       payload,
@@ -74,7 +72,13 @@ async function getDetail(req, res, next) {
       isDeleted: false,
     });
 
-    res.send(200, {
+    if (!payload) {
+      return res.send(400, {
+        message: "Không tìm thấy"
+      });
+    }
+
+    return res.send(200, {
       payload,
       message: "Xem chi tiết thành công"
     });

@@ -7,12 +7,13 @@ const { default: mongoose } = require('mongoose');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const productsRouter = require('./routes/product/router');
+const productsFileRouter = require('./routes/product-file/router');
 const categoriesRouter = require('./routes/category/router');
 const suppliersRouter = require('./routes/supplier/router');
 const customersRouter = require('./routes/customer/router');
 const employeesRouter = require('./routes/employee/router');
-
+const productsRouter = require('./routes/product/router');
+const ordersRouter = require('./routes/order/router');
 const app = express();
 
 // view engine setup
@@ -29,12 +30,13 @@ mongoose.connect('mongodb://127.0.0.1:27017/node-32-database');
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/products', productsRouter);
+app.use('/products-file', productsFileRouter);
 app.use('/categories', categoriesRouter);
 app.use('/suppliers', suppliersRouter);
 app.use('/customers', customersRouter);
 app.use('/employees', employeesRouter);
-
+app.use('/products', productsRouter);
+app.use('/orders', ordersRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
