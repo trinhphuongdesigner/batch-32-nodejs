@@ -1,12 +1,9 @@
 const { fuzzySearch } = require('../../utils');
-const { Supplier } = require('../../models');
-// const Supplier = require('../../models/supplier');
+const { Customer } = require('../../models');
 
 async function getAll(req, res, next) {
   try {
-    console.log('««««« hello »»»»»');
-    const payload = await Supplier.find({ isDeleted: false });
-    console.log('««««« payload »»»»»', payload);
+    const payload = await Customer.find({ isDeleted: false });
 
     res.send(200, {
       payload,
@@ -22,13 +19,13 @@ async function getAll(req, res, next) {
 
 async function create(req, res, next) {
   try {
-    const { name, email, phoneNumber, address } = req.body;
+    const { firstName, lastName, email, phoneNumber, address, password, birthday } = req.body;
 
-    const newSupplier = new Supplier({
-      name, email, phoneNumber, address
+    const newCustomer = new Customer({
+      firstName, lastName, email, phoneNumber, address, password, birthday
     });
 
-    const payload = await newSupplier.save();
+    const payload = await newCustomer.save();
 
     res.send(200, {
       payload,
@@ -45,14 +42,15 @@ async function create(req, res, next) {
 
 async function search(req, res, next) {
   try {
-    const { name, address, email } = req.query;
+    const { firstName, lastName, address, email } = req.query;
     const conditionFind = { isDeleted: false };
 
-    if (name) conditionFind.name = fuzzySearch(name);
+    if (firstName) conditionFind.firstName = fuzzySearch(firstName);
+    if (lastName) conditionFind.lastName = fuzzySearch(lastName);
     if (address) conditionFind.address = fuzzySearch(address);
     if (email) conditionFind.email = fuzzySearch(email);
 
-    const payload = await Supplier.find(conditionFind);
+    const payload = await Customer.find(conditionFind);
 
     res.send(200, {
       payload,
@@ -69,7 +67,7 @@ async function search(req, res, next) {
 async function getDetail(req, res, next) {
   try {
     const { id } = req.params;
-    const payload = await Supplier.findOne({
+    const payload = await Customer.findOne({
       _id: id,
       isDeleted: false,
     });
@@ -90,7 +88,7 @@ async function update(req, res, next) {
   try {
     const { id } = req.params;
 
-    const payload = await Supplier.findOneAndUpdate(
+    const payload = await Customer.findOneAndUpdate(
       { _id: id, isDeleted: false },
       { ...req.body },
       { new: true },
@@ -116,7 +114,7 @@ async function deleteFunc(req, res, next) {
   try {
     const { id } = req.params;
 
-    const payload = await Supplier.findOneAndUpdate(
+    const payload = await Customer.findOneAndUpdate(
       { _id: id, isDeleted: false },
       { isDeleted: true },
       { new: true },
