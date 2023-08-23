@@ -87,7 +87,7 @@ module.exports = {
           return ObjectId.isValid(value);
         }),
 
-      orderDetails: yup.array().of(
+      productList: yup.array().of(
         yup.object().shape({
           productId: yup
             .string()

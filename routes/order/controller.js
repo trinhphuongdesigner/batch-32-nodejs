@@ -35,7 +35,7 @@ module.exports = {
     try {
       const data = req.body;
 
-      const { customerId, employeeId, orderDetails } = data;
+      const { customerId, employeeId, productList, paymentType, status, shippedDate, createdDate } = req.body;
 
       const getCustomer = Customer.findOne({
         _id: customerId,
@@ -53,21 +53,21 @@ module.exports = {
       ]);
 
       const errors = [];
-      if (!customer || customer.isDelete)
-        errors.push('Khách hàng không tồn tại');
-      if (!employee || employee.isDelete)
-        errors.push('Nhân viên không tồn tại');
+      if (!customer) errors.push('Khách hàng không tồn tại');
+      if (!employee) errors.push('Nhân viên không tồn tại');
 
-      await asyncForEach(orderDetails, async (item) => {
+      await asyncForEach(productList, async (item, index, arr) => {
         const product = await Product.findOne({
           _id: item.productId,
           isDeleted: false,
           // stock: { $gte : item.quantity },
         });
 
-        if (!product) errors.push(`Sản phẩm ${item.productId} không khả dung`);
+        if (!product) errors.push(`Sản phẩm ${item.productId} không khả dụng`);
 
-        if (product && product.stock < item.quantity) errors.push(`Số lượng sản phẩm ${item.productId} không khả dụng`);
+        // if (product && product.isDeleted) errors.push(`Aản phẩm ${item.productId} đã bị xóa`);
+        if (product && product.stock < item.quantity) errors.push(`Số lượng sản phẩm '${product.name}' không khả dụng`);
+        // if (product && product.stock < item.quantity) errors.push(`Số lượng sản phẩm ${item.productId} không khả dụng`);
       });
 
       if (errors.length > 0) {
@@ -82,7 +82,7 @@ module.exports = {
 
       let result = await newItem.save();
 
-      await asyncForEach(result.orderDetails, async (item) => {
+      await asyncForEach(result.productList, async (item) => {
         await Product.findOneAndUpdate(
           { _id: item.productId },
           { $inc: { stock: -item.quantity } }

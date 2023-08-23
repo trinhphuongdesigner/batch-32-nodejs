@@ -22,8 +22,8 @@ module.exports = {
 
   getList: async (req, res, next) => { // NOTE
     try {
-      const { page, pageSize } = req.query;
-      const limit = pageSize || 12;
+      const { page, pageSize } = req.query; // 10 - 1
+      const limit = pageSize || 12; // 10
       const skip = limit * (page - 1) || 0;
 
       const conditionFind = { isDeleted: false };
@@ -48,13 +48,17 @@ module.exports = {
 
   search: async (req, res, next) => {
     try {
-      const { name, categoryId, priceStart, priceEnd, supplierId } = req.query;
+      const { keyword, categoryId, priceStart, priceEnd, supplierId, page, pageSize, stockStart, stockEnd, discountStart, discountEnd } = req.query;
+      const limit = pageSize || 12; // 10
+      const skip = limit * (page - 1) || 0;
+
       const conditionFind = { isDeleted: false };
 
-      if (name) conditionFind.name = fuzzySearch(name);
+      if (keyword) conditionFind.name = fuzzySearch(keyword);
 
       if (categoryId) {
         conditionFind.categoryId = categoryId;
+        // conditionFind.$expr = { $eq: ['$categoryId', categoryId] };
       };
 
       if (supplierId) {
@@ -73,11 +77,16 @@ module.exports = {
 
       const result = await Product.find(conditionFind)
         .populate('category')
-        .populate('supplier');
+        .populate('supplier')
+        .skip(skip)
+        .limit(limit);
+
+      const total = await Product.countDocuments(conditionFind)
 
       res.send(200, {
         message: "Thành công",
         payload: result,
+        total,
       });
     } catch (error) {
       return res.send(404, {
