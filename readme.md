@@ -43,3 +43,5 @@ Tạo đơn hàng => thành công thì cập nhập số lượng các sp tươn
 'DELIVERING' => đang giao
 
 mongodb+srv://trinhphuongdev:<password>@cluster0.xrdmevl.mongodb.net/
+
+yarn add babel-eslint eslint eslint-config-airbnb eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react --dev
