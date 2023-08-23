@@ -63,11 +63,17 @@ module.exports = {
           // stock: { $gte : item.quantity },
         });
 
-        if (!product) errors.push(`Sản phẩm ${item.productId} không khả dụng`);
+        if (!product) {
+          errors.push(`Sản phẩm ${item.productId} không khả dụng`);
+        } else {
+          if (product.stock < item.quantity) errors.push(`Số lượng sản phẩm '${item.productId}' không khả dụng`);
+          if (product.price < item.price) errors.push(`Giá của sản phẩm '${item.productId}' không hợp lệ`);
+          if (product.discount < item.discount) errors.push(`Giảm giá của sản phẩm '${item.productId}' không hợp lệ`);
+        }
 
         // if (product && product.isDeleted) errors.push(`Aản phẩm ${item.productId} đã bị xóa`);
-        if (product && product.stock < item.quantity) errors.push(`Số lượng sản phẩm '${product.name}' không khả dụng`);
         // if (product && product.stock < item.quantity) errors.push(`Số lượng sản phẩm ${item.productId} không khả dụng`);
+
       });
 
       if (errors.length > 0) {
@@ -107,10 +113,15 @@ module.exports = {
 
       let found = await Order.findOne({
         _id: id,
+        isDeleted: false,
         $nor: [{ status: 'CANCELED' }, { status: 'REJECTED' }, { status: 'COMPLETED' }]
       });
 
       if (found) {
+        if (found.status === 'DELIVERING' && status === "WAITING") {
+          return res.status(410).send({ code: 400, message: 'Trạng thái không khả dụng' });
+        }
+
         const result = await Order.findByIdAndUpdate(
           found._id,
           { status },
@@ -137,6 +148,7 @@ module.exports = {
 
       let checkOrder = await Order.findOne({
         _id: id,
+        isDeleted: false,
         $or: [{ status: 'DELIVERING' }, { status: 'WAITING' }]
       });
 
@@ -160,9 +172,11 @@ module.exports = {
           });
         }
 
-        const updateOrder = await Order.findByIdAndUpdate(id, { employeeId }, {
-          new: true,
-        });
+        const updateOrder = await Order.findByIdAndUpdate(
+          id,
+          { employeeId },
+          { new: true },
+          );
 
         if (updateOrder) {
           return res.send({
