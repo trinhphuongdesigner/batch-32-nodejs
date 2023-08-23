@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-mongoose.connect('mongodb://127.0.0.1:27017/node-32-database');
+mongoose.connect('mongodb+srv://trinhphuongdev:xjJx9zdpdfLS2JCI@cluster0.xrdmevl.mongodb.net/node-32-database');
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

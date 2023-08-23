@@ -41,3 +41,5 @@ Tạo đơn hàng => thành công thì cập nhập số lượng các sp tươn
 
 'WAITING' => đợi duyệt
 'DELIVERING' => đang giao
+
+mongodb+srv://trinhphuongdev:<password>@cluster0.xrdmevl.mongodb.net/
