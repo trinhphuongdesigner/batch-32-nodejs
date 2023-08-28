@@ -10,12 +10,15 @@ const {
   question1,
   question1a,
   question1b,
-  // question2a,
-  // question2b,
-  // question3,
-  // question3a,
+  question2,
+  question2a,
+  question2b,
+  question3,
+  question3a,
   // question3b,
-  // question3c,
+  question3c,
+  question3d,
+  question3e,
   // question4,
   // question4a,
   // question5,
@@ -45,12 +48,15 @@ const {
 router.get('/1', question1);
 router.get('/1a', question1a);
 router.get('/1b', question1b);
-// router.get('/2a', question2a);
-// router.get('/2b', question2b);
-// router.get('/3', question3);
-// router.get('/3a', validateSchema(q3a), question3a);
+router.get('/2', question2);
+router.get('/2a', question2a);
+router.get('/2b', question2b);
+router.get('/3', question3);
+router.get('/3a', question3a);
 // router.get('/3b', question3b);
-// router.get('/3c', question3c);
+router.get('/3c', question3c);
+router.get('/3d', question3d);
+router.get('/3e', question3e);
 // router.get('/4', question4);
 // router.get('/4a', question4a);
 // router.get('/5', question5);
