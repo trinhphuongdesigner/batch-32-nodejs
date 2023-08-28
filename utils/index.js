@@ -18,7 +18,7 @@ module.exports = {
       await callback(array[index], index, array);
     }
   },
-  
+
   generationID: () => Math.floor(Date.now()),
 
   validateSchema: (schema) => async (req, res, next) => { // thực thi việc xác thực
@@ -40,6 +40,34 @@ module.exports = {
     }
   },
 
+
+  getQueryDateTime: (from, to, type = 'IN') => {
+    fromDate = new Date(from);
+
+    const tmpToDate = new Date(to);
+    toDate = new Date(tmpToDate.setDate(tmpToDate.getDate() + 1));
+
+    let query = {};
+
+    if (type === 'IN') {
+      const compareFromDate = { $gte: ['$createdDate', fromDate] };
+      const compareToDate = { $lt: ['$createdDate', toDate] };
+
+      query = {
+        $expr: { $and: [compareFromDate, compareToDate] },
+      };
+    } else {
+      const compareFromDate = { $lt: ['$createdDate', fromDate] };
+      const compareToDate = { $gt: ['$createdDate', toDate] };
+
+      query = {
+        $expr: { $or: [compareFromDate, compareToDate] },
+      };
+    }
+
+    return query;
+  },
+
   checkIdSchema: yup.object({
     params: yup.object({
       id: yup.string().test('inValid', 'ID sai định dạng', (value) => {
@@ -50,7 +78,7 @@ module.exports = {
 
   fuzzySearch: (text) => {
     const regex = text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-  
+
     return new RegExp(regex, 'gi');
   },
 

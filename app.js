@@ -14,6 +14,7 @@ const customersRouter = require('./routes/customer/router');
 const employeesRouter = require('./routes/employee/router');
 const productsRouter = require('./routes/product/router');
 const ordersRouter = require('./routes/order/router');
+const questionsRouter = require('./routes/questions/router');
 const app = express();
 
 // view engine setup
@@ -26,8 +27,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-mongoose.connect('mongodb://localhost:27017/node-32-database');
-// mongoose.connect('mongodb+srv://trinhphuongdev:xjJx9zdpdfLS2JCI@cluster0.xrdmevl.mongodb.net/node-32-database');
+// mongoose.connect('mongodb://localhost:27017/node-32-database');
+mongoose.connect('mongodb+srv://trinhphuongdev:xjJx9zdpdfLS2JCI@cluster0.xrdmevl.mongodb.net/node-32-database');
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -38,6 +39,7 @@ app.use('/customers', customersRouter);
 app.use('/employees', employeesRouter);
 app.use('/products', productsRouter);
 app.use('/orders', ordersRouter);
+app.use('/questions', questionsRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
