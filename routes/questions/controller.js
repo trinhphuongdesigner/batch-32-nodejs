@@ -664,8 +664,6 @@ module.exports = {
         },
       };
 
-      console.log('««««« conditionFind »»»»»', conditionFind);
-
       let results = await Order.find(conditionFind).lean();
 
       let total = await Order.countDocuments();
