@@ -273,7 +273,7 @@ module.exports = {
       // ]);
 
       let results = await Product.aggregate()
-      .match({ $expr: { $lte: [d, 20000] }});
+        .match({ $expr: { $lte: [d, 20000] } });
 
       let total = await Product.countDocuments();
 
@@ -846,14 +846,20 @@ module.exports = {
           _id: '$_id',
           name: { $first: '$name' },
           description: { $first: '$description' },
+          totalStock: {
+            $sum: '$products.stock',
+          },
           totalProduct: {
-            // $sum: '$products.stock',
-            $sum: {$cond: { if: {
-              $and : [
-                {$gt: ['$products.stock', 0]},
-              ]
-            }, then: 1, else: 0} },
-          },  
+            $sum: {
+              $cond: {
+                if: {
+                  $and: [
+                    { $gt: ['$products.stock', 0] },
+                  ]
+                }, then: 1, else: 0
+              }
+            },
+          },
         })
         .sort({
           totalProduct: -1,
