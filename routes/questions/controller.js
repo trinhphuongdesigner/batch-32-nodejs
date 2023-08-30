@@ -567,7 +567,7 @@ module.exports = {
         // .populate('customer')
         .populate('employee')
         .populate({
-          path: 'orderDetails.product',
+          path: 'productList.product',
           select: { name: 1, stock: 1 },
         })
         .lean();
@@ -619,13 +619,13 @@ module.exports = {
       //   from: 'products',
       //   localField: 'orderDetails.productId',
       //   foreignField: '_id',
-      //   as: 'orderDetails.product',
+      //   as: 'productList.product',
       // })
       // .unwind('product')
       // .populate({ path: 'customer', select: 'firstName lastName' })
       // .populate('employee')
       // .populate({
-      //   path: 'orderDetails.product',
+      //   path: 'productList.product',
       //   select: { name: 1 , stock: 1},
       // })
       // .select('-customerId -employeeId -orderDetails.productId')
@@ -680,6 +680,54 @@ module.exports = {
     }
   },
 
+  question8c: async (req, res, next) => {
+    try {
+      let { status, fromDate, toDate } = req.query;
+
+      fromDate = new Date(fromDate);
+      fromDate.setHours(0, 0, 0, 0);
+
+      const tmpToDate = new Date(toDate);
+      tmpToDate.setHours(0, 0, 0, 0);
+      toDate = new Date(tmpToDate.setDate(tmpToDate.getDate() + 1));
+
+      const compareStatus = { $eq: ['$status', status] };
+      const compareFromDate = { $lt: ['$shippedDate', fromDate] };
+      const compareToDate = { $gt: ['$shippedDate', toDate] };
+
+      const conditionFind = {
+        $expr: {
+          $or: [
+            {
+              $and: [compareStatus, compareFromDate],
+            },
+            {
+              $and: [compareStatus, compareToDate]
+            },
+          ]
+        },
+      };
+
+      let results = await Order.find(conditionFind)
+        .populate('productList.product')
+        .populate('customer')
+        .populate('employee')
+        .lean();
+
+      let total = await Order.countDocuments();
+
+      return res.send({
+        code: 200,
+        total,
+        totalResult: results.length,
+        payload: results,
+      });
+    } catch (err) {
+      console.log('««««« err »»»»»', err);
+      return res.status(500).json({ code: 500, error: err });
+    }
+  },
+
   question8b: async (req, res, next) => {
     try {
       let { status, fromDate, toDate } = req.query;
@@ -700,7 +748,7 @@ module.exports = {
       };
 
       let results = await Order.find(conditionFind)
-        .populate('orderDetails.product')
+        .populate('productList.product')
         .populate('customer')
         .populate('employee')
         .lean();
@@ -800,12 +848,16 @@ module.exports = {
           description: { $first: '$description' },
           totalProduct: {
             // $sum: '$products.stock',
-            $sum: 1,
-          },
+            $sum: {$cond: { if: {
+              $and : [
+                {$gt: ['$products.stock', 0]},
+              ]
+            }, then: 1, else: 0} },
+          },  
         })
         .sort({
           totalProduct: -1,
-          name: 1,
+          name: -1,
         });
 
       let total = await Category.countDocuments();
@@ -885,15 +937,15 @@ module.exports = {
           from: 'products',
           localField: 'orderDetails.productId',
           foreignField: '_id',
-          as: 'orderDetails.product',
+          as: 'productList.product',
         })
-        .unwind('orderDetails.product')
+        .unwind('productList.product')
         .group({
           _id: '$orderDetails.productId',
-          name: { $first: '$orderDetails.product.name' },
-          price: { $first: '$orderDetails.product.pric e' },
-          discount: { $first: '$orderDetails.product.discount' },
-          stock: { $first: '$orderDetails.product.stock' },
+          name: { $first: '$productList.product.name' },
+          price: { $first: '$productList.product.pric e' },
+          discount: { $first: '$productList.product.discount' },
+          stock: { $first: '$productList.product.stock' },
           countSale: { $sum: '$orderDetails.quantity' },
           count: { $sum: 1 },
         });

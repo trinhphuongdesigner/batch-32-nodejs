@@ -15,7 +15,8 @@ const productSchema = new Schema(
 
 // Virtual with Populate
 productSchema.virtual('product', {
-  ref: 'Product',
+  // ref: 'Product',
+  ref: 'products',
   localField: 'productId',
   foreignField: '_id',
   justOne: true,

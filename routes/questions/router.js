@@ -28,9 +28,10 @@ const {
   question7a,
   question8a,
   question8b,
-  // question13,
-  // question15,
-  // question18,
+  question8c,
+  question13,
+  question15,
+  question18,
   // question19,
   // question20,
   // question21,
@@ -67,9 +68,10 @@ router.get('/7', question7);
 router.get('/7a', question7a);
 router.get('/8a', question8a);
 router.get('/8b', question8b);
-// router.get('/13', question13);
-// router.get('/15', question15);
-// router.get('/18', question18);
+router.get('/8c', question8c);
+router.get('/13', question13);
+router.get('/15', question15);
+router.get('/18', question18);
 // router.get('/19', question19);
 // router.get('/20', question20);
 // router.get('/21', question21);
