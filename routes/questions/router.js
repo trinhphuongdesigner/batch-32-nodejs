@@ -19,10 +19,11 @@ const {
   question3c,
   question3d,
   question3e,
-  // question4,
-  // question4a,
-  // question5,
-  // question6,
+  question4,
+  question4a,
+  question5,
+  question5a,
+  question6,
   // question7,
   // question7a,
   // question8a,
@@ -57,10 +58,11 @@ router.get('/3a', question3a);
 router.get('/3c', question3c);
 router.get('/3d', question3d);
 router.get('/3e', question3e);
-// router.get('/4', question4);
-// router.get('/4a', question4a);
-// router.get('/5', question5);
-// router.get('/6', question6);
+router.get('/4', question4);
+router.get('/4a', question4a);
+router.get('/5', question5);
+router.get('/5a', question5a);
+router.get('/6', question6);
 // router.get('/7', question7);
 // router.get('/7a', question7a);
 // router.get('/8a', question8a);

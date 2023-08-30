@@ -273,7 +273,7 @@ module.exports = {
       // ]);
 
       let results = await Product.aggregate()
-      .match({ $expr: { $lte: [d, 20000] }});      
+      .match({ $expr: { $lte: [d, 20000] }});
 
       let total = await Product.countDocuments();
 
@@ -461,9 +461,37 @@ module.exports = {
         },
       };
 
-      console.log('««««« conditionFind »»»»»', conditionFind);
-
       let results = await Customer.find(conditionFind);
+
+      let total = await Customer.countDocuments();
+
+      return res.send({
+        code: 200,
+        total,
+        totalResult: results.length,
+        payload: results,
+      });
+    } catch (err) {
+      console.log('««««« err »»»»»', err);
+      return res.status(500).json({ code: 500, error: err });
+    }
+  },
+
+  question5a: async (req, res, next) => {
+    try {
+      const year = Number(req.query.year);
+
+      const conditionFind = {
+        $expr: {
+          $eq: [{ $year: '$birthday' }, year],
+        },
+      };
+
+      let results = await Customer.aggregate()
+        .match(conditionFind)
+        .addFields({
+          birthYear: { $year: '$birthday' }
+        });
 
       let total = await Customer.countDocuments();
 
